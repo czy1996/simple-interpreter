@@ -2,11 +2,11 @@ from utils import log
 
 
 def string_element(s):
-    '''
+    """
     提取字符串元素
     :param s:
     :return:
-    '''
+    """
     r = '"'
     ec = False
     for i, e in enumerate(s[1:]):
@@ -22,11 +22,11 @@ def string_element(s):
 
 
 def common_element(s):
-    '''
+    """
     提取元素
     :param s:
     :return:
-    '''
+    """
     for i, e in enumerate(s):
         if e == '"':
             return string_element(s[i:])
@@ -35,11 +35,11 @@ def common_element(s):
 
 
 def formatted_token(token):
-    '''
+    """
     数字转换为数字，替他不变
     :param token:
     :return:
-    '''
+    """
     num = '012345678'
     if token[0] in num:
         if '.' in token:
@@ -51,11 +51,11 @@ def formatted_token(token):
 
 
 def tonkenizer(s):
-    '''
+    """
     string to tokens
     :param s:
     :return:
-    '''
+    """
     l = []
     count = 0
     for i, e in enumerate(s):
@@ -94,5 +94,5 @@ def test_tokenizer():
 
 
 if __name__ == '__main__':
-    test_common_element()
-    test_tokenizer()
+# test_common_element()
+# test_tokenizer()

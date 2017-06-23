@@ -2,6 +2,11 @@ from utils import log
 
 
 def string_element(s):
+    '''
+    提取字符串元素
+    :param s:
+    :return:
+    '''
     r = '"'
     ec = False
     for i, e in enumerate(s[1:]):
@@ -17,6 +22,11 @@ def string_element(s):
 
 
 def common_element(s):
+    '''
+    提取元素
+    :param s:
+    :return:
+    '''
     for i, e in enumerate(s):
         if e == '"':
             return string_element(s[i:])
@@ -41,6 +51,11 @@ def formatted_token(token):
 
 
 def tonkenizer(s):
+    '''
+    string to tokens
+    :param s:
+    :return:
+    '''
     l = []
     count = 0
     for i, e in enumerate(s):

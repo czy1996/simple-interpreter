@@ -50,7 +50,7 @@ def formatted_token(token):
         return token
 
 
-def tonkenizer(s):
+def tokenizer(s):
     """
     string to tokens
     :param s:
@@ -74,6 +74,55 @@ def tonkenizer(s):
     return l
 
 
+def parser(tokens):
+    """
+    tokens to ast
+    :param l:
+    :return:
+    """
+    token = tokens.pop()
+    l = []
+    if token == ')':
+        while tokens[-1] != '(':
+            l.append(analyze_eles(tokens))
+        tokens.pop()
+        l.reverse()
+        return l
+
+
+def analyze_eles(tokens):
+    token = tokens[-1]
+    if token == ')':
+        return parser(tokens)
+    else:
+        return tokens.pop()
+
+
+def tree(s):
+    """
+    string to ast
+    :param s:
+    :return:
+    """
+    tokens = tokenizer(s)
+    ast = parser(tokens)
+    return ast
+
+
+def test_tree():
+    s1 = '(+ 1 2)'
+    s2 = '(+ 12 2.34 (- 345 45))'
+    s3 = '(+ foo 2.34 (- 3 bar))'
+    s4 = '(+ foo 2.34 (- 3 "hi(\\" )"))'
+    s5 = '(+ foo 2.34 (- 3 bar) (- 3 bar))'
+
+    print(s1, '>>>', tree(s1))
+    print(s2, '>>>', tree(s2))
+    print(s3, '>>>', tree(s3))
+    print(s4, '>>>', tree(s4))
+    print(s5, '>>>', tree(s5))
+
+
 def test_common_element():
     st1 = 'foo 2.34 (- 3 bar))'
     st2 = 'bar))'
@@ -87,12 +136,13 @@ def test_tokenizer():
     s3 = '(+ foo 2.34 (- 3 bar))'
     s4 = '(+ foo 2.34 (- 3 "hi(\\" )"))'
 
-    log(s1, tonkenizer(s1))
-    log(s2, tonkenizer(s2))
-    log(s3, tonkenizer(s3))
-    log(s4, tonkenizer(s4))
+    log(s1, tokenizer(s1))
+    log(s2, tokenizer(s2))
+    log(s3, tokenizer(s3))
+    log(s4, tokenizer(s4))
 
 
 if __name__ == '__main__':
-# test_common_element()
-# test_tokenizer()
+    # test_common_element()
+    # test_tokenizer()
+    test_tree()

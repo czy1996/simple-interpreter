@@ -14,8 +14,11 @@ class Apply(object):
         self.func = func
 
     def plus(self, l):
+        log('var at plus', self.var)
         r = self.apply(l[1])
+        log('plus r', r)
         for i, e in enumerate(l[2:]):
+            log('plus e', self.apply(e))
             r += self.apply(e)
         return r
 
@@ -70,7 +73,7 @@ class Apply(object):
         func_params = l[2]
         new_var_dict = {}
         for i, arg in enumerate(func_args):
-            new_var_dict[arg] = func_params[i]
+            new_var_dict[arg] = self.apply(func_params[i])
         # log('new_var_dict', new_var_dict)
         temp_dict = self.var.copy()
         temp_dict.update(new_var_dict)
@@ -106,6 +109,7 @@ class Apply(object):
         for i, e in enumerate(l):
             v = self.apply(e)
             r.append(v)
+            log('var', self.var)
         return r[-1]
 
 
@@ -213,6 +217,42 @@ def test_call_function():
     ensure(apply.call_func(l1) == 2, 'call_function 测试1')
 
 
+def test_apply():
+    l1 = ['+', 1, 2, ['-', 2, 1]]
+    l2 = ['if', ['>', 1, 2], 1, 2]
+    l3 = ['if', ['<', 1, 2], 1, 2]
+    l4 = ['if', ['=', 1, 2], 1, 2]
+
+    # print(apply(l1))
+    # print(apply(l2))
+    # print(apply(l3))
+    # print(apply(l4))
+
+    ensure(Apply().apply(l1) == 4, 'apply 测试1')
+    ensure(Apply().apply(l2) == 2, 'apply 测试2')
+    ensure(Apply().apply(l3) == 1, 'apply 测试3')
+    ensure(Apply().apply(l4) == 2, 'apply 测试4')
+
+
+def test_apply_trees():  # 这是最顶层的函数，传入抽象语法树
+    l1 = [['+', 1, 2, ['-', 2, 1]]]
+    l2 = [['-', 2, 2], ['-', 2, 1]]
+    l3 = [['var', 'a', ['-', 2, 1]]]
+    l4 = [['var', 'a', 1], ['var', 'b', ['+', 1, 1]], ['if', ['<', 'a', 0], 3, 'b']]
+    l5 = [
+        ['var', 'a', 3],
+        ['var', 'b', 2],
+        ['def', 'f1', ['a', 'b'], [['-', ['+', 'a', 2], 3, 'b']]],
+        ['call', 'f1', ['a', 'b']]
+    ]
+
+    # ensure(Apply().apply_trees(l1) == 4, 'apply_trees 测试1')
+    # ensure(Apply().apply_trees(l2) == 1, 'apply_trees 测试2')
+    # ensure(Apply().apply_trees(l3) == 'N/A', 'apply_trees 测试3')
+    # ensure(Apply().apply_trees(l4) == 2, 'apply_trees 测试4')
+    ensure(Apply().apply_trees(l5) == 0, 'apply_trees 测试5')
+
+
 def test():
     # test_plus()
     # test_minus()
@@ -220,6 +260,9 @@ def test():
     # test_divide()
     # test_judge_cmp()
     # test_define_variable()
-    test_call_function()
+    # test_call_function()
+    # test_apply()
+    test_apply_trees()
+
 if __name__ == '__main__':
     test()

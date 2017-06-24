@@ -48,6 +48,13 @@ class Apply(object):
         else:
             return self.apply(l[3])
 
+    def define_variable(self, l):
+        self.var[l[1]] = self.apply(l[2])
+        return 'N/A'
+
+    def call_variable(self, l):
+        return self.var.get(l)
+
     def apply(self, l):
         ops = {
             '+': self.plus,
@@ -64,7 +71,7 @@ class Apply(object):
             op = l[0]
             r = ops[op](l)
         elif type(l) == str:
-            pass
+            return self.call_variable(l)
         else:
             r = l
         return r
@@ -154,12 +161,21 @@ def test_judge_cmp():
     ensure(Apply().judge(l3) == 1, 'judge 测试3')
 
 
+def test_define_variable():
+    l1 = ['var', 'a', 2]
+    l2 = ['var', 'a', ['-', 2, 1]]
+
+    ensure(Apply().define_variable(l1) == 'N/A', 'define_variable 测试1')
+    ensure(Apply().define_variable(l2) == 'N/A', 'define_variable 测试2')
+
+
+
 def test():
     # test_plus()
     # test_minus()
     # test_times()
     # test_divide()
-    test_judge_cmp()
-
+    # test_judge_cmp()
+    test_define_variable()
 if __name__ == '__main__':
     test()

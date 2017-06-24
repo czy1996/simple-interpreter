@@ -55,6 +55,28 @@ class Apply(object):
     def call_variable(self, l):
         return self.var.get(l)
 
+    def define_func(self, l):
+        # ['def', 'func', [,], [[]]]
+        func_name = l[1]
+        func_args = l[2]
+        func_body = l[3]
+        self.func[func_name] = (func_args, func_body)
+        return 'N/A'
+
+    def call_func(self, l):
+        func_name = l[1]
+        func_args, func_body = self.func[func_name]
+        # log('func', self.func[func_name])
+        func_params = l[2]
+        new_var_dict = {}
+        for i, arg in enumerate(func_args):
+            new_var_dict[arg] = func_params[i]
+        # log('new_var_dict', new_var_dict)
+        temp_dict = self.var.copy()
+        temp_dict.update(new_var_dict)
+        # log('new_var_dict', temp_dict)
+        return Apply(new_var_dict, self.func).apply_trees(func_body)
+
     def apply(self, l):
         ops = {
             '+': self.plus,
@@ -65,6 +87,9 @@ class Apply(object):
             '<': self.less_than,
             '=': self.equal,
             'if': self.judge,
+            'var': self.define_variable,
+            'def': self.define_func,
+            'call': self.call_func,
         }
 
         if type(l) == list:
@@ -75,6 +100,13 @@ class Apply(object):
         else:
             r = l
         return r
+
+    def apply_trees(self, l):
+        r = []
+        for i, e in enumerate(l):
+            v = self.apply(e)
+            r.append(v)
+        return r[-1]
 
 
 def test_plus():
@@ -169,6 +201,17 @@ def test_define_variable():
     ensure(Apply().define_variable(l2) == 'N/A', 'define_variable 测试2')
 
 
+def test_call_function():
+    d1 = [['def', 'f1', ['a', 'b'], [['if', ['<', 'a', 0], 3, 'b']]]]
+    apply = Apply()
+    apply.apply_trees(d1)
+    # print('func', self.func)
+    l1 = ['call', 'f1', [1, 2]]
+    # log('var', apply.var)
+    # log('func', apply.func)
+    # log('func result', apply.call_func(l1))
+    ensure(apply.call_func(l1) == 2, 'call_function 测试1')
+
 
 def test():
     # test_plus()
@@ -176,6 +219,7 @@ def test():
     # test_times()
     # test_divide()
     # test_judge_cmp()
-    test_define_variable()
+    # test_define_variable()
+    test_call_function()
 if __name__ == '__main__':
     test()

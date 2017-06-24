@@ -33,12 +33,31 @@ class Apply(object):
         values = map(self.apply, l[1:])
         return reduce(lambda x, y: x / y, values)
 
+    def greater_than(self, l):
+        return self.apply(l[1]) > self.apply(l[2])
+
+    def less_than(self, l):
+        return self.apply(l[1]) < self.apply(l[2])
+
+    def equal(self, l):
+        return self.apply(l[1]) == self.apply(l[2])
+
+    def judge(self, l):
+        if self.apply(l[1]) is True:
+            return self.apply(l[2])
+        else:
+            return self.apply(l[3])
+
     def apply(self, l):
         ops = {
             '+': self.plus,
             '-': self.minus,
             '*': self.times,
             '/': self.divide,
+            '>': self.greater_than,
+            '<': self.less_than,
+            '=': self.equal,
+            'if': self.judge,
         }
 
         if type(l) == list:
@@ -85,12 +104,62 @@ def test_divide():
     ensure(Apply().divide(l2) == 5, 'divide 测试2')
 
 
-def test():
-    test_plus()
-    test_minus()
-    test_times()
-    test_divide()
+def test_greater_than():
+    l1 = ['>', 2, 1]
+    l2 = ['>', 1, 2]
+    l3 = ['>', 1, ['+', 1, 1]]
 
+    ensure(Apply().greater_than(l1), 'more 测试1')
+    ensure(not Apply().greater_than(l2), 'more 测试2')
+    ensure(not Apply().greater_than(l3), 'more 测试3')
+
+
+def test_less_than():
+    l1 = ['<', 2, 1]
+    l2 = ['<', 1, 2]
+    l3 = ['<', 1, ['+', 1, 1]]
+
+    ensure(not Apply().less_than(l1), 'less 测试1')
+    ensure(Apply().less_than(l2), 'less 测试2')
+    ensure(Apply().less_than(l3), 'less 测试3')
+
+
+def test_equal():
+    l1 = ['=', 2, 1]
+    l2 = ['=', 2, 2]
+    l3 = ['=', 2, ['+', 1, 1]]
+
+    ensure(not Apply().equal(l1), 'equal 测试1')
+    ensure(Apply().equal(l2), 'equal 测试2')
+    ensure(Apply().equal(l3), 'equal 测试3')
+
+
+def test_judge():
+    l1 = ['if', True, 1, 2]
+    l2 = ['if', False, 2, ['+', 1, 2]]
+    l3 = ['if', False, 2, ['if', True, 1, 2]]
+
+    ensure(Apply().judge(l1) == 1, 'judge 测试1')
+    ensure(Apply().judge(l2) == 3, 'judge 测试2')
+    ensure(Apply().judge(l3) == 1, 'judge 测试3')
+
+
+def test_judge_cmp():
+    l1 = ['if', ['>', 3, 4], 1, 2]
+    l2 = ['if', False, 2, ['+', 1, 2]]
+    l3 = ['if', False, 2, ['if', True, 1, 2]]
+
+    ensure(Apply().judge(l1) == 2, 'judge 测试1')
+    ensure(Apply().judge(l2) == 3, 'judge 测试2')
+    ensure(Apply().judge(l3) == 1, 'judge 测试3')
+
+
+def test():
+    # test_plus()
+    # test_minus()
+    # test_times()
+    # test_divide()
+    test_judge_cmp()
 
 if __name__ == '__main__':
     test()

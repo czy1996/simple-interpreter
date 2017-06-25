@@ -14,11 +14,11 @@ class Apply(object):
         self.func = func
 
     def plus(self, l):
-        log('var at plus', self.var)
+        # log('var at plus', self.var)
         r = self.apply(l[1])
-        log('plus r', r)
+        # log('plus r', r)
         for i, e in enumerate(l[2:]):
-            log('plus e', self.apply(e))
+            # log('plus e', self.apply(e))
             r += self.apply(e)
         return r
 
@@ -109,7 +109,7 @@ class Apply(object):
         for i, e in enumerate(l):
             v = self.apply(e)
             r.append(v)
-            log('var', self.var)
+            # log('var', self.var)
         return r[-1]
 
 
@@ -141,8 +141,8 @@ def test_divide():
     l1 = ['/', 2, 2]
     l2 = ['/', 30, 2, ['+', 1, 2]]
 
-    log(Apply().divide(l1))
-    log(Apply().divide(l2))
+    # log(Apply().divide(l1))
+    # log(Apply().divide(l2))
     ensure(Apply().divide(l1) == 1, 'divide 测试1')
     ensure(Apply().divide(l2) == 5, 'divide 测试2')
 
